@@ -32,18 +32,15 @@
 	}
 	
 	/*
-		select 직원ID, 이름, 연봉, 급여순위
+	select 번호, 직원ID, 이름, 연봉, 급여순위 
 		from 
-			(select
-			employee_id 직원ID, 
-			last_name 이름, 
-			salary 연봉, 
-			rank() over(order by salary desc) 급여순위 
-			from employees)
-		where 급여순위 between 1 and 10;
+		(select rownum 번호, 직원ID, 이름, 연봉, 급여순위 
+			from 
+			(select employee_id 직원ID, last_name 이름, salary 연봉, rank() over(order by salary desc) 급여순위 from employees))
+	where 번호 between 1 and 10
 	*/
 	
-	String rankSql = "select 직원ID, 이름, 연봉, 급여순위 from (select employee_id 직원ID, last_name 이름, salary 연봉, rank() over(order by salary desc) 급여순위 from employees) where 급여순위 between ? and ?";
+	String rankSql = "select 번호, 직원ID, 이름, 연봉, 급여순위 from (select rownum 번호, 직원ID, 이름, 연봉, 급여순위 from (select rownum 번호, employee_id 직원ID, last_name 이름, salary 연봉, rank() over(order by salary desc) 급여순위 from employees)) where 번호 between ? and ?";
 	PreparedStatement rankStmt = conn.prepareStatement(rankSql);
 	rankStmt.setInt(1, beginRow);
 	rankStmt.setInt(2, endRow);
@@ -51,6 +48,7 @@
 	ArrayList<HashMap<String, Object>> rankList = new ArrayList<>();
 	while(rankRs.next()) {
 		HashMap<String, Object> r = new HashMap<String, Object>();
+		r.put("번호", rankRs.getInt("번호"));
 		r.put("직원ID", rankRs.getString("직원ID"));
 		r.put("이름", rankRs.getString("이름"));
 		r.put("연봉", rankRs.getInt("연봉"));
@@ -73,6 +71,7 @@
 	<h1>rankFunctionEmpList</h1>
 	<table border ="1">
 		<tr>
+			<td>번호</td>
 			<td>직원ID</td>
 			<td>이름</td>
 			<td>연봉</td>
@@ -82,6 +81,7 @@
 		for(HashMap<String, Object> r : rankList) {
 	%>
 		<tr>
+			<td><%=(Integer)(r.get("번호"))%></td>
 			<td><%=(String)(r.get("직원ID"))%></td>
 			<td><%=(String)(r.get("이름"))%></td>
 			<td><%=(Integer)(r.get("연봉"))%></td>
