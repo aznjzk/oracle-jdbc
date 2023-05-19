@@ -24,7 +24,7 @@
 		totalRow = totalRowRs.getInt(1);
 	}
 	
-	int rowPerPage = 10;
+	int rowPerPage = 5;
 	int beginRow = (currentPage-1) * rowPerPage + 1;
 	int endRow = beginRow + (rowPerPage-1);
 	if(endRow > totalRow) {
@@ -125,7 +125,7 @@
 			lastPage = lastPage + 1;
 		}
 		// 페이지 네비게이션 페이징
-		int pagePerPage = 10;
+		int pagePerPage = 7;
 		
 		int minPage = ((currentPage-1) / pagePerPage * pagePerPage) + 1;
 		int maxPage = minPage + (pagePerPage - 1);
